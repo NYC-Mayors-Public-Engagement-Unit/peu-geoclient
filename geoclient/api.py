@@ -5,8 +5,8 @@ try:
 except ImportError:
     from ConfigParser import ConfigParser  # Python 2
 import requests
-from geoclient.config import BASE_URL, USER_CONFIG
-from .error import GeoclientError, _format_return_message
+from src.python_geoclient.geoclient.config import BASE_URL, USER_CONFIG
+from src.python_geoclient.geoclient.error import GeoclientError, _format_return_message
 
 
 class Geoclient(object):
@@ -31,17 +31,16 @@ class Geoclient(object):
     BASE_URL = BASE_URL
 
     def __init__(self, app_id=None, app_key=None, proxies=None):
-
         config = ConfigParser()
         config.read(os.path.expanduser(USER_CONFIG))
 
-        if (app_id is None or app_key is None) and config.has_section('GEOCLIENT'):
-            credentials = dict(config.items('GEOCLIENT'))
-            app_id = credentials['id']
-            app_key = credentials['key']
+        if (app_id is None or app_key is None) and config.has_section("GEOCLIENT"):
+            credentials = dict(config.items("GEOCLIENT"))
+            app_id = credentials["id"]
+            app_key = credentials["key"]
 
-        if proxies is None and config.has_section('PROXIES'):
-            proxies = dict(config.items('PROXIES'))
+        if proxies is None and config.has_section("PROXIES"):
+            proxies = dict(config.items("PROXIES"))
 
         if not app_id:
             raise GeoclientError("Missing app_id")
@@ -54,37 +53,32 @@ class Geoclient(object):
         self.proxies = proxies
 
     def _request(self, endpoint, **kwargs):
-        kwargs.update({
-            'app_id': self.app_id,
-            'app_key': self.app_key
-        })
+        kwargs.update({"app_id": self.app_id, "app_key": self.app_key})
 
         # Ensure no 'None' values are sent to server
         for k in list(kwargs.keys()):
             if kwargs[k] is None:
                 kwargs.pop(k)
 
-        key = 'results' if endpoint == "search" else endpoint
+        key = "results" if endpoint == "search" else endpoint
 
-        r = requests.get('{}{}'.format(Geoclient.BASE_URL, endpoint),
-                         params=kwargs,
-                         proxies=self.proxies)
+        r = requests.get(
+            "{}{}".format(Geoclient.BASE_URL, endpoint),
+            params=kwargs,
+            proxies=self.proxies,
+        )
 
         if r.status_code == requests.codes.ok:
             result = r.json()[key]
 
             if isinstance(result, dict):
-                if 'geosupportReturnCode' in result:
-                    return_code = result['geosupportReturnCode']
+                if "geosupportReturnCode" in result:
+                    return_code = result["geosupportReturnCode"]
                     if not return_code.isdigit() or int(return_code) > 1:
-                        raise GeoclientError(
-                            _format_return_message(result),
-                            result
-                        )
+                        raise GeoclientError(_format_return_message(result), result)
                 else:
                     raise GeoclientError(
-                        "No 'geosupportReturnCode' received from server.",
-                        result
+                        "No 'geosupportReturnCode' received from server.", result
                     )
             return result
 
@@ -107,8 +101,9 @@ class Geoclient(object):
             information.
         """
 
-        return self._request(u'address', houseNumber=houseNumber, street=street,
-                             borough=borough)
+        return self._request(
+            "address", houseNumber=houseNumber, street=street, borough=borough
+        )
 
     def address_zip(self, houseNumber, street, zip):
         """
@@ -125,7 +120,7 @@ class Geoclient(object):
             information.
         """
 
-        return self._request(u'address', houseNumber=houseNumber, street=street, zip=zip)
+        return self._request("address", houseNumber=houseNumber, street=street, zip=zip)
 
     def bbl(self, borough, block, lot):
         """
@@ -142,7 +137,7 @@ class Geoclient(object):
         :returns: A dict with property-level information.
         """
 
-        return self._request(u'bbl', borough=borough, block=block, lot=lot)
+        return self._request("bbl", borough=borough, block=block, lot=lot)
 
     def bin(self, bin):
         """
@@ -155,11 +150,18 @@ class Geoclient(object):
         :returns: A dict with property-level information.
         """
 
-        return self._request(u'bin', bin=bin)
+        return self._request("bin", bin=bin)
 
-    def blockface(self, onStreet, crossStreetOne, crossStreetTwo, borough,
-                  boroughCrossStreetOne=None, boroughCrossStreetTwo=None,
-                  compassDirection=None):
+    def blockface(
+        self,
+        onStreet,
+        crossStreetOne,
+        crossStreetTwo,
+        borough,
+        boroughCrossStreetOne=None,
+        boroughCrossStreetTwo=None,
+        compassDirection=None,
+    ):
         """
         Given a valid borough, "on street" and cross streets provides
         blockface-level information.
@@ -185,16 +187,25 @@ class Geoclient(object):
         :returns: A dict with blockface-level information.
         """
 
-        return self._request(u'blockface', onStreet=onStreet,
-                             crossStreetOne=crossStreetOne,
-                             crossStreetTwo=crossStreetTwo,
-                             borough=borough,
-                             boroughCrossStreetOne=boroughCrossStreetOne,
-                             boroughCrossStreetTwo=boroughCrossStreetTwo,
-                             compassDirection=compassDirection)
+        return self._request(
+            "blockface",
+            onStreet=onStreet,
+            crossStreetOne=crossStreetOne,
+            crossStreetTwo=crossStreetTwo,
+            borough=borough,
+            boroughCrossStreetOne=boroughCrossStreetOne,
+            boroughCrossStreetTwo=boroughCrossStreetTwo,
+            compassDirection=compassDirection,
+        )
 
-    def intersection(self, crossStreetOne, crossStreetTwo, borough,
-                     boroughCrossStreetTwo=None, compassDirection=None):
+    def intersection(
+        self,
+        crossStreetOne,
+        crossStreetTwo,
+        borough,
+        boroughCrossStreetTwo=None,
+        compassDirection=None,
+    ):
         """
         Given a valid borough and cross streets returns information for the
         point defined by the two streets.
@@ -218,11 +229,14 @@ class Geoclient(object):
         :returns: A dict with intersection-level information.
         """
 
-        return self._request(u'intersection', crossStreetOne=crossStreetOne,
-                             crossStreetTwo=crossStreetTwo,
-                             borough=borough,
-                             boroughCrossStreetTwo=boroughCrossStreetTwo,
-                             compassDirection=compassDirection)
+        return self._request(
+            "intersection",
+            crossStreetOne=crossStreetOne,
+            crossStreetTwo=crossStreetTwo,
+            borough=borough,
+            boroughCrossStreetTwo=boroughCrossStreetTwo,
+            compassDirection=compassDirection,
+        )
 
     def place(self, name, borough):
         """
@@ -236,17 +250,19 @@ class Geoclient(object):
         :returns: A dict with place-level information.
         """
 
-        return self._request(u'place', name=name, borough=borough)
+        return self._request("place", name=name, borough=borough)
 
-    def search(self,
-               input,
-               exactMatchForSingleSuccess=None,
-               exactMatchMaxLevel=None,
-               returnPolicy=None,
-               returnPossiblesWithExact=None,
-               returnRejections=None,
-               returnTokens=None,
-               similarNamesDistance=None):
+    def search(
+        self,
+        input,
+        exactMatchForSingleSuccess=None,
+        exactMatchMaxLevel=None,
+        returnPolicy=None,
+        returnPossiblesWithExact=None,
+        returnRejections=None,
+        returnTokens=None,
+        similarNamesDistance=None,
+    ):
         """
         Beginning with version 1.10, any of the six request types documented in section 1.2 can be accessed using a
         single unparsed location string. Assuming that the Geoclient parser can guess the location type requested and
@@ -280,12 +296,14 @@ class Geoclient(object):
         :returns: List of geocodes corresponding to the type of request that was made.
         """
 
-        return self._request(u'search',
-                             input=input,
-                             exactMatchForSingleSuccess=exactMatchForSingleSuccess,
-                             exactMatchMaxLevel=exactMatchMaxLevel,
-                             returnPolicy=returnPolicy,
-                             returnPossiblesWithExact=returnPossiblesWithExact,
-                             returnRejections=returnRejections,
-                             returnTokens=returnTokens,
-                             similarNamesDistance=similarNamesDistance)
+        return self._request(
+            "search",
+            input=input,
+            exactMatchForSingleSuccess=exactMatchForSingleSuccess,
+            exactMatchMaxLevel=exactMatchMaxLevel,
+            returnPolicy=returnPolicy,
+            returnPossiblesWithExact=returnPossiblesWithExact,
+            returnRejections=returnRejections,
+            returnTokens=returnTokens,
+            similarNamesDistance=similarNamesDistance,
+        )

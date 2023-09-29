@@ -1,1 +1,1 @@
-from .api import *
+from src.python_geoclient.geoclient.api import *
