@@ -5,8 +5,8 @@ try:
 except ImportError:
     from ConfigParser import ConfigParser  # Python 2
 import requests
-from src.python_geoclient.geoclient.config import BASE_URL, USER_CONFIG
-from src.python_geoclient.geoclient.error import GeoclientError, _format_return_message
+from geoclient.config import BASE_URL, USER_CONFIG
+from geoclient.error import GeoclientError, _format_return_message
 
 
 class Geoclient(object):
