@@ -1,0 +1,64 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "Project Name",
+	"image": "597290771896.dkr.ecr.us-east-1.amazonaws.com/peu_base_environment:latest",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli": "1"
+	},
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "pip3 install --user -r ./requirements.txt",
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python3",
+				"python.pythonPath": "/usr/local/bin/python3",
+				"terminal.integrated.shell.linux": "zsh",
+				"terminal.integrated.profiles.linux": {
+					"bash": {
+						"path": "bash",
+						"icon": "terminal-bash"
+					},
+					"zsh": {
+						"path": "zsh"
+					}
+				},
+				"terminal.integrated.inheritEnv": false,
+				"editor.formatOnSave": true,
+				"python.formatting.provider": "black"
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.isort",
+				"equinusocio.vsc-material-theme-icons",
+				"RaillyHugo.one-hunter",
+				"ms-toolsai.jupyter",
+				"wayou.vscode-todo-highlight",
+				"timonwong.shellcheck",
+				"mhutchie.git-graph",
+				"eamodio.gitlens",
+				"oderwat.indent-rainbow",
+				"Wattenberger.footsteps",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	},
+	"containerEnv": {
+		"WORKDIR": "/home/vscode",
+		"JUPYTER_ENABLE_LAB": "yes"
+	},
+	"remoteEnv": {
+		// Use a GitHub Codespaces secret or local secret:
+		"AWS_ACCESS_KEY_ID": "${localEnv:AWS_ACCESS_KEY_ID}",
+		"AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}",
+		"AWS_SESSION_TOKEN": "${localEnv:AWS_SESSION_TOKEN}",
+		"AWS_REGION": "us-east-1",
+		"HRA_USERNAME": "${localEnv:HRA_USERNAME}",
+		"HRA_PASSWORD": "${localEnv:HRA_PASSWORD}"
+	},
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
+}
