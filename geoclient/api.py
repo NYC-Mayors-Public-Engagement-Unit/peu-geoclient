@@ -32,7 +32,7 @@ class Geoclient(object):
 
     BASE_URL = BASE_URL
 
-    def __init__(self, app_id=None, app_key=None, proxies=None):
+    def __init__(self, app_id=None, app_key=None, proxies=None, headers=None):
         config = ConfigParser()
         config.read(os.path.expanduser(USER_CONFIG))
 
@@ -53,10 +53,13 @@ class Geoclient(object):
         self.app_id = app_id
         self.app_key = app_key
         self.proxies = proxies
+        self.headers = headers
         self.session = requests.Session()
+
         retries = Retry(
             total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504]
         )
+
         adapter = HTTPAdapter(max_retries=retries)
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
