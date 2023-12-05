@@ -1,12 +1,14 @@
 import os
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+from geoclient.config import BASE_URL, USER_CONFIG
+from geoclient.error import GeoclientError, _format_return_message
 
 try:
     from configparser import ConfigParser  # Python 3
 except ImportError:
     from ConfigParser import ConfigParser  # Python 2
-import requests
-from geoclient.config import BASE_URL, USER_CONFIG
-from geoclient.error import GeoclientError, _format_return_message
 
 
 class Geoclient(object):
@@ -51,6 +53,13 @@ class Geoclient(object):
         self.app_id = app_id
         self.app_key = app_key
         self.proxies = proxies
+        self.session = requests.Session()
+        retries = Retry(
+            total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504]
+        )
+        adapter = HTTPAdapter(max_retries=retries)
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
 
     def _request(self, endpoint, **kwargs):
         kwargs.update({"app_id": self.app_id, "app_key": self.app_key})

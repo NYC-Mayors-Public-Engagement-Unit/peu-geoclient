@@ -56,8 +56,8 @@
 		"AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}",
 		"AWS_SESSION_TOKEN": "${localEnv:AWS_SESSION_TOKEN}",
 		"AWS_REGION": "us-east-1",
-		"HRA_USERNAME": "${localEnv:HRA_USERNAME}",
-		"HRA_PASSWORD": "${localEnv:HRA_PASSWORD}"
+		"GEOCODER_APP_ID": "${localEnv:GEOCODER_APP_ID}",
+		"GEOCODER_APP_KEY": "${localEnv:GEOCODER_APP_KEY}"
 	},
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode"
