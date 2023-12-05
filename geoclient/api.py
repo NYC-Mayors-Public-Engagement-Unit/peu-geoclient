@@ -57,7 +57,7 @@ class Geoclient(object):
         self.session = requests.Session()
 
         retries = Retry(
-            total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504]
+            total=5, backoff_factor=5, status_forcelist=[500, 502, 503, 504]
         )
 
         adapter = HTTPAdapter(max_retries=retries)
