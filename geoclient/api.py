@@ -63,6 +63,7 @@ class Geoclient(object):
         adapter = HTTPAdapter(max_retries=retries)
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
+        self.session.proxies.update(self.proxies)
 
     def _request(self, endpoint, **kwargs):
         kwargs.update({"app_id": self.app_id, "app_key": self.app_key})
@@ -74,11 +75,18 @@ class Geoclient(object):
 
         key = "results" if endpoint == "search" else endpoint
 
-        r = requests.get(
+        # r = requests.get(
+        #     "{}{}".format(Geoclient.BASE_URL, endpoint),
+        #     params=kwargs,
+        #     # proxies=self.proxies,
+        # )
+
+        r = self.session.get(
             "{}{}".format(Geoclient.BASE_URL, endpoint),
             params=kwargs,
             proxies=self.proxies,
         )
+        
 
         if r.status_code == requests.codes.ok:
             result = r.json()[key]
